@@ -1,0 +1,17 @@
+# Virtual Environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Memory/Data
+data/
+memory.json
+
+# Secrets
+.env
+config.py
