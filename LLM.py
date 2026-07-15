@@ -14,7 +14,6 @@ print(sys.executable)
 
 from openai import OpenAI, APITimeoutError
 
-from config import API_KEY, BASE_URL, MODEL_NAME
 
 client = OpenAI(
     api_key=API_KEY,
