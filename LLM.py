@@ -1,3 +1,14 @@
+import streamlit as st
+from openai import OpenAI, APITimeoutError
+
+API_KEY = st.secrets["API_KEY"]
+BASE_URL = st.secrets["BASE_URL"]
+MODEL_NAME = st.secrets["MODEL_NAME"]
+
+client = OpenAI(
+    api_key=API_KEY,
+    base_url=BASE_URL,
+)
 import sys
 print(sys.executable)
 
