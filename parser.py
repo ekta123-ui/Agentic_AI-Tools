@@ -27,4 +27,3 @@ if __name__ == "__main__":
 
     results = parse_tool_call(response)
     print(results)
-    

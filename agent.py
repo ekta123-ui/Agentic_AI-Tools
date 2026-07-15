@@ -1,17 +1,53 @@
 from LLM import chat
 from memory import load_memory, save_memory
-from tools import calculator
-from parser import parse_tool_call
 from prompts import SYSTEM_PROMPT
+from tools.registry import execute_tool
+from router import detect_tool
+
+MAX_MEMORY = 20
 
 
 class Agent:
 
-    def run(self, user_input: str) -> str:
+    def __init__(self):
+        pass
 
-        # Load previous conversation
+    def run_agent(self, user_input):
+
         memory = load_memory()
+        memory = memory[-MAX_MEMORY:]
 
+        # -----------------------------
+        # Router
+        # -----------------------------
+        tool_name, arguments = detect_tool(user_input)
+
+        if tool_name:
+
+            print(f"Using Tool: {tool_name}")
+
+            try:
+                result = execute_tool(tool_name, arguments)
+            except Exception as e:
+                result = f"Tool Error: {e}"
+
+            memory.append({
+                "role": "user",
+                "content": user_input
+            })
+
+            memory.append({
+                "role": "assistant",
+                "content": str(result)
+            })
+
+            save_memory(memory)
+
+            return str(result)
+
+        # -----------------------------
+        # Normal Chat
+        # -----------------------------
         messages = [
             {
                 "role": "system",
@@ -19,82 +55,32 @@ class Agent:
             }
         ]
 
-        # Add previous conversation
         messages.extend(memory)
 
-        # Add current user message
-        messages.append(
-            {
-                "role": "user",
-                "content": user_input
-            }
-        )
+        messages.append({
+            "role": "user",
+            "content": user_input
+        })
 
-        # Get response from LLM
-        llm_response = chat(messages)
+        try:
+            response = chat(messages)
 
-        # Check if LLM wants to use a tool
-        tool_request = parse_tool_call(llm_response)
+        except Exception as e:
+            return f"LLM Error: {e}"
 
-        # Normal response (no tool required)
-        if tool_request is None:
+        memory.append({
+            "role": "user",
+            "content": user_input
+        })
 
-            memory.append(
-                {
-                    "role": "user",
-                    "content": user_input
-                }
-            )
-
-            memory.append(
-                {
-                    "role": "assistant",
-                    "content": llm_response
-                }
-            )
-
-            save_memory(memory)
-
-            return llm_response
-
-        print("Tool Request:", tool_request)
-
-        tool_result = ""
-
-        # Calculator Tool
-        if tool_request["tool"] == "calculator":
-
-            expression = tool_request.get("expression")
-
-            if expression:
-                tool_result = calculator(expression)
-            else:
-                tool_result = "No expression provided."
-
-        print("Tool Result:", tool_result)
-
-        # Don't call the LLM again.
-        # Return the calculator result directly.
-        final_response = f"The answer is {tool_result}."
-
-        # Save conversation
-        memory.append(
-            {
-                "role": "user",
-                "content": user_input
-            }
-        )
-
-        memory.append(
-            {
-                "role": "assistant",
-                "content": final_response
-            }
-        )
+        memory.append({
+            "role": "assistant",
+            "content": response
+        })
 
         save_memory(memory)
 
-        return final_response
+        return response
 
 
 if __name__ == "__main__":
@@ -103,12 +89,9 @@ if __name__ == "__main__":
 
     while True:
 
-        query = input("You: ")
+        user_input = input("You : ")
 
-        if query.lower() in ["exit", "quit"]:
-            print("Goodbye!")
+        if user_input.lower() == "exit":
             break
 
-        answer = agent.run(query)
-
-        print("Agent:", answer)
+        print("\nAgent :", agent.run_agent(user_input))

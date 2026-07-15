@@ -4,26 +4,32 @@ import os
 MEMORY_FILE = "data/memory.json"
 
 
-def load_memory() -> list:
-    if not os.path.exists(MEMORY_FILE):
-        return []
-
-    try:
-        with open(MEMORY_FILE, "r", encoding="utf-8") as file:
-            return json.load(file)
-
-    except Exception:
-        return []
-
-
-def save_memory(memory: list) -> None:
+def load_memory():
     os.makedirs(os.path.dirname(MEMORY_FILE), exist_ok=True)
 
-    with open(MEMORY_FILE, "w", encoding="utf-8") as file:
-        json.dump(memory, file, indent=4, ensure_ascii=False)
+    if not os.path.exists(MEMORY_FILE):
+        with open(MEMORY_FILE, "w", encoding="utf-8") as f:
+            json.dump([], f)
+
+    try:
+        with open(MEMORY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    except json.JSONDecodeError:
+        return []
 
 
-def add_message(memory: list, role: str, content: str) -> list:
+def save_memory(memory):
+    os.makedirs(os.path.dirname(MEMORY_FILE), exist_ok=True)
+
+    # Keep only last 20 messages
+    memory = memory[-20:]
+
+    with open(MEMORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(memory, f, indent=4, ensure_ascii=False)
+
+
+def add_message(memory, role, content):
     memory.append({
         "role": role,
         "content": content
@@ -32,15 +38,12 @@ def add_message(memory: list, role: str, content: str) -> list:
 
 
 if __name__ == "__main__":
-    print("Loading memory")
     memory = load_memory()
+    memory = memory[-10:]
 
-    print(memory)
+    memory = add_message(memory, "user", "Hello")
+    memory = add_message(memory, "assistant", "Hi!")
 
-    print("\nAdding messages...")
-    memory = add_message(memory, "user", "hello")
-    memory = add_message(memory, "assistant", "hi how are you")
-
-    save_memory(memory)
+    save_memory(memory[-10:])
 
     print(load_memory())
