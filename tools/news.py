@@ -2,8 +2,8 @@ import requests
 import streamlit as st
 from datetime import datetime, timedelta
 
-NEWS_API_KEY = st.secrets["a2d9fe97768445908783c1ebfc9c76d4"]
-NEWS_URL = st.secrets["https://newsapi.org/v2/everything"]  # should be https://newsapi.org/v2/everything
+NEWS_API_KEY =["a2d9fe97768445908783c1ebfc9c76d4"]
+NEWS_URL = ["https://newsapi.org/v2/everything"]  # should be https://newsapi.org/v2/everything
 
 
 def execute(arguments: dict):
