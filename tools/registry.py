@@ -3,6 +3,7 @@ from .weather import execute as weather
 from .time_tool import execute as time_tool
 from .dictionary import execute as dictionary
 from .news import execute as news
+from .image import execute as image
 
 
 TOOLS = {
@@ -11,6 +12,7 @@ TOOLS = {
     "news": news,
     "dictionary": dictionary,
     "time": time_tool,
+    "image": image,
 }
 
 def execute_tool(tool_name, arguments):
@@ -79,6 +81,17 @@ print(
         "news",
         {
             "topic": "Artificial Intelligence"
+        }
+    )
+)
+print("\nImage Tool Test")
+print("----------------")
+
+print(
+    execute_tool(
+        "image",
+        {
+            "query": "angry cat"
         }
     )
 )

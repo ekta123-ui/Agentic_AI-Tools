@@ -13,5 +13,5 @@ data/
 memory.json
 
 # Secrets
-.env
+.env/
 config.py

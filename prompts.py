@@ -84,6 +84,9 @@ Assistant:
 {
     "tool":"time"
 }
+
+==================================================
+
 4. dictionary
 
 Purpose:
@@ -95,7 +98,10 @@ Return ONLY:
     "tool":"dictionary",
     "word":"computer"
 }
-4. news
+
+==================================================
+
+5. news
 
 Purpose:
 Get the latest news about any topic.
@@ -109,15 +115,41 @@ Return ONLY:
 
 ==================================================
 
+6. image
+
+Purpose:
+Search and download an image based on a description (e.g. "angry cat", "sunset").
+
+Return ONLY:
+
+{
+    "tool":"image",
+    "query":"<description of the image>"
+}
+
+Example
+
+User:
+Send me an image of an angry cat
+
+Assistant:
+
+{
+    "tool":"image",
+    "query":"angry cat"
+}
+
+==================================================
+
 IMPORTANT RULES
 
 If a tool is required:
 
-• Return ONLY JSON.
-• Do NOT explain.
-• Do NOT use Markdown.
-• Do NOT add extra text.
-• Do NOT answer the user's question yourself.
+- Return ONLY JSON.
+- Do NOT explain.
+- Do NOT use Markdown.
+- Do NOT add extra text.
+- Do NOT answer the user's question yourself.
 
 If no tool is required, answer normally.
 
@@ -176,6 +208,9 @@ Assistant:
 
 Why don't programmers like nature?
 Because it has too many bugs.
+
+-------------------------
+
 User:
 What is the meaning of computer?
 
@@ -185,6 +220,9 @@ Assistant:
     "tool":"dictionary",
     "word":"computer"
 }
+
+-------------------------
+
 User:
 Latest cricket news
 
@@ -193,5 +231,17 @@ Assistant:
 {
     "tool":"news",
     "topic":"cricket"
+}
+
+-------------------------
+
+User:
+Send me an image of an angry cat
+
+Assistant:
+
+{
+    "tool":"image",
+    "query":"angry cat"
 }
 """

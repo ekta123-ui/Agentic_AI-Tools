@@ -2,11 +2,6 @@ import requests
 
 
 def execute(arguments: dict):
-    """
-    Dictionary Tool
-    Returns detailed information about an English word.
-    """
-
     word = arguments.get("word")
 
     if not word:
@@ -20,64 +15,40 @@ def execute(arguments: dict):
         if response.status_code != 200:
             return f"No definition found for '{word}'."
 
-        data = response.json()[0]
+        entries = response.json()
+        data = entries[0]
 
-        # Word
         word_name = data.get("word", word)
-
-        # Pronunciation
         phonetic = data.get("phonetic", "Not Available")
 
-        # Meaning
-        meaning = data["meanings"][0]
+        result = f"📖 Word: {word_name}\n"
+        result += f"🔤 Pronunciation: {phonetic}\n"
 
-        part_of_speech = meaning.get("partOfSpeech", "Not Available")
+        all_synonyms = set()
+        all_antonyms = set()
 
-        definition = meaning["definitions"][0].get(
-            "definition",
-            "Not Available"
-        )
+        for meaning in data.get("meanings", []):
+            part_of_speech = meaning.get("partOfSpeech", "Not Available")
+            result += f"\n📝 {part_of_speech.capitalize()}\n"
 
-        example = meaning["definitions"][0].get(
-            "example",
-            "No example available."
-        )
+            for i, definition_entry in enumerate(
+                meaning.get("definitions", [])[:3], start=1
+            ):
+                definition = definition_entry.get("definition", "Not Available")
+                example = definition_entry.get("example")
 
-        synonyms = meaning["definitions"][0].get(
-            "synonyms",
-            []
-        )
+                result += f"   {i}. {definition}\n"
+                if example:
+                    result += f"      e.g. \"{example}\"\n"
 
-        antonyms = meaning["definitions"][0].get(
-            "antonyms",
-            []
-        )
+                all_synonyms.update(definition_entry.get("synonyms", []))
+                all_antonyms.update(definition_entry.get("antonyms", []))
 
-        synonyms = ", ".join(synonyms) if synonyms else "None"
+            all_synonyms.update(meaning.get("synonyms", []))
+            all_antonyms.update(meaning.get("antonyms", []))
 
-        antonyms = ", ".join(antonyms) if antonyms else "None"
-
-        result = f"""
-📖 Word: {word_name}
-
-🔤 Pronunciation:
-{phonetic}
-
-📝 Part of Speech:
-{part_of_speech}
-
-📚 Definition:
-{definition}
-
-💡 Example:
-{example}
-
-🔁 Synonyms:
-{synonyms}
-
-🚫 Antonyms:
-{antonyms}
-"""
+        result += f"\n🔁 Synonyms: {', '.join(all_synonyms) if all_synonyms else 'None'}\n"
+        result += f"🚫 Antonyms: {', '.join(all_antonyms) if all_antonyms else 'None'}\n"
 
         return result.strip()
 
@@ -86,9 +57,4 @@ def execute(arguments: dict):
 
 
 if __name__ == "__main__":
-
-    print("=" * 50)
-    print("Dictionary Tool Test")
-    print("=" * 50)
-
     print(execute({"word": "computer"}))
