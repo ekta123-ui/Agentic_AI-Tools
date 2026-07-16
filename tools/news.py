@@ -1,5 +1,8 @@
 import requests
-from config import NEWS_API_KEY, NEWS_URL
+import streamlit as st
+
+NEWS_API_KEY = st.secrets["NEWS_API_KEY"]
+NEWS_URL = st.secrets["NEWS_URL"]
 
 
 def execute(arguments: dict):
