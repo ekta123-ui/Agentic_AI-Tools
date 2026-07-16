@@ -2,7 +2,7 @@ import os
 import requests
 import streamlit as st
 
-PEXELS_API_KEY = st.secrets["PEXELS_API_KEY"]
+PEXELS_API_KEY =["V6GJ8DqqjZyrAU1aPwIUQON4mX6yaNuM3pXS3YLRLtITqu4EsQGGbUew"]
 PEXELS_URL = "https://api.pexels.com/v1/search"
 
 SAVE_DIR = "data/images"
