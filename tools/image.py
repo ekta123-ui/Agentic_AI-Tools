@@ -16,7 +16,11 @@ def execute(arguments: dict):
         response = requests.get(
             PEXELS_URL,
             headers=headers,
-            params={"query": query, "per_page": 1},
+            params={
+                "query": query,
+                "per_page": 5,
+                "orientation": "landscape",
+            },
             timeout=10,
         )
 
@@ -27,16 +31,28 @@ def execute(arguments: dict):
         if not photos:
             return f"No image found for '{query}'."
 
-        photo = photos[0]
-        image_url = photo["src"]["large"]
-        photographer = photo.get("photographer", "Unknown")
+        # Pick the most relevant photo by matching query words in alt text
+        query_words = set(query.lower().split())
+        best_photo = photos[0]
+        best_score = -1
+
+        for photo in photos:
+            alt = photo.get("alt", "").lower()
+            score = sum(1 for word in query_words if word in alt)
+            if score > best_score:
+                best_score = score
+                best_photo = photo
+
+        image_url = best_photo["src"]["large2x"]
+        photographer = best_photo.get("photographer", "Unknown")
+        alt_text = best_photo.get("alt", query)
 
         # Return special marker so app.py can display image directly
-        return f"IMAGE::{image_url}::📸 Photographer: {photographer}"
+        return f"IMAGE::{image_url}::📸 {alt_text} | Photographer: {photographer}"
 
     except Exception as e:
         return f"Image Error: {e}"
 
 
 if __name__ == "__main__":
-    print(execute({"query": "angry cat"}))
+    print(execute({"query": "Lionel Messi"}))

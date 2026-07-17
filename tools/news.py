@@ -133,16 +133,16 @@ def execute(arguments: dict):
     try:
 
         from_date = (
-            datetime.utcnow() - timedelta(days=2)
+            datetime.utcnow() - timedelta(days=7)
         ).strftime("%Y-%m-%d")
 
         params = {
             "q": topic,
             "from": from_date,
             "language": "en",
-            "pageSize": 5,
+            "pageSize": 10,
             "sortBy": "publishedAt",
-            "searchIn": "title,description",
+            "searchIn": "title,description,content",
             "apiKey": NEWS_API_KEY,
         }
 
@@ -164,13 +164,18 @@ def execute(arguments: dict):
         if not articles:
             return f"No recent news found for '{topic}'."
 
-        result = f"📰 Latest News on '{topic}'\n\n"
+        total = data.get("totalResults", len(articles))
+        result = f"📰 Latest News on '{topic}' ({min(10, total)} of {total} results)\n"
+        result += "=" * 60 + "\n\n"
 
         for i, article in enumerate(articles, start=1):
 
-            title = article.get("title", "No Title")
-            description = article.get("description", "No description available.")
-            source = article.get("source", {}).get("name", "Unknown")
+            title   = article.get("title", "No Title")
+            description = article.get("description") or "No description available."
+            content = article.get("content") or ""
+            source  = article.get("source", {}).get("name", "Unknown")
+            author  = article.get("author") or "Unknown Author"
+            url     = article.get("url", "")
             published = article.get("publishedAt", "")
 
             if published:
@@ -182,10 +187,20 @@ def execute(arguments: dict):
                 except ValueError:
                     pass
 
+            # Clean content — remove truncation marker like "[+1234 chars]"
+            if content:
+                content = content.split("[+")[0].strip()
+
             result += f"{i}. {title}\n"
-            result += f"🗞️ Source: {source}\n"
-            result += f"🕒 Published: {published}\n"
-            result += f"{description}\n\n"
+            result += f"   🗞️  Source   : {source}\n"
+            result += f"   ✍️  Author   : {author}\n"
+            result += f"   🕒 Published: {published}\n"
+            result += f"\n   📝 Description:\n   {description}\n"
+            if content and content != description:
+                result += f"\n   📄 Content:\n   {content}\n"
+            if url:
+                result += f"\n   🔗 Read More: {url}\n"
+            result += "\n" + "-" * 60 + "\n\n"
 
         return result.strip()
 
@@ -197,4 +212,4 @@ def execute(arguments: dict):
 
 
 if __name__ == "__main__":
-    print(execute({"topic": "latest fifa news"}))
+    print(execute({"topic": "Lionel Messi"}))
