@@ -16,10 +16,22 @@ if "agent" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+
+def display_message(role, content):
+    with st.chat_message(role):
+        # Check if it's an image response
+        if isinstance(content, str) and content.startswith("IMAGE::"):
+            parts = content.split("::", 2)
+            image_url = parts[1]
+            caption = parts[2] if len(parts) > 2 else ""
+            st.image(image_url, caption=caption, use_container_width=True)
+        else:
+            st.markdown(content)
+
+
 # Display previous messages
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    display_message(message["role"], message["content"])
 
 # User input
 prompt = st.chat_input("Ask me anything...")
@@ -29,8 +41,7 @@ if prompt:
         {"role": "user", "content": prompt}
     )
 
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    display_message("user", prompt)
 
     response = st.session_state.agent.run_agent(prompt)
 
@@ -38,5 +49,4 @@ if prompt:
         {"role": "assistant", "content": response}
     )
 
-    with st.chat_message("assistant"):
-        st.markdown(response)
+    display_message("assistant", response)

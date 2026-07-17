@@ -29,11 +29,18 @@ def clean_topic(topic: str):
     topic = " ".join(topic.split())
 
     topic_map = {
+        # Sports
         "fifa": 'FIFA AND (football OR soccer)',
         "football": "football",
         "soccer": "soccer",
         "cricket": "cricket",
         "ipl": '"Indian Premier League" OR IPL',
+        "sports": "sports",
+        "basketball": "basketball",
+        "tennis": "tennis",
+        "olympics": "Olympics",
+
+        # Technology
         "ai": '"Artificial Intelligence" OR AI',
         "artificial intelligence": '"Artificial Intelligence" OR AI',
         "tesla": "Tesla",
@@ -42,6 +49,73 @@ def clean_topic(topic: str):
         "microsoft": "Microsoft",
         "openai": "OpenAI",
         "chatgpt": "ChatGPT",
+        "technology": "technology",
+        "tech": "technology",
+        "cybersecurity": "cybersecurity",
+        "blockchain": "blockchain",
+        "crypto": "cryptocurrency",
+        "cryptocurrency": "cryptocurrency",
+        "bitcoin": "Bitcoin",
+
+        # Politics
+        "politics": "politics",
+        "political": "politics",
+        "election": "election",
+        "government": "government",
+        "parliament": "parliament",
+        "congress": "congress",
+        "president": "president",
+        "prime minister": "prime minister",
+        "modi": "Narendra Modi",
+        "trump": "Donald Trump",
+        "biden": "Joe Biden",
+        "india politics": "India politics",
+        "us politics": "US politics",
+
+        # Business
+        "business": "business",
+        "economy": "economy",
+        "stock market": "stock market",
+        "stocks": "stocks",
+        "finance": "finance",
+        "market": "market",
+        "startup": "startup",
+
+        # Health
+        "health": "health",
+        "medical": "medical",
+        "covid": "COVID-19",
+        "coronavirus": "coronavirus",
+        "vaccine": "vaccine",
+        "cancer": "cancer",
+        "mental health": "mental health",
+
+        # Science
+        "science": "science",
+        "space": "space",
+        "nasa": "NASA",
+        "climate": "climate change",
+        "environment": "environment",
+        "research": "research",
+
+        # Entertainment
+        "entertainment": "entertainment",
+        "movies": "movies",
+        "bollywood": "Bollywood",
+        "hollywood": "Hollywood",
+        "music": "music",
+        "celebrity": "celebrity",
+
+        # World
+        "world": "world",
+        "international": "international",
+        "war": "war",
+        "ukraine": "Ukraine",
+        "russia": "Russia",
+        "china": "China",
+        "india": "India",
+        "usa": "USA",
+        "us": "United States",
     }
 
     return topic_map.get(topic, topic)
