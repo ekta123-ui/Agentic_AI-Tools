@@ -1,5 +1,5 @@
 import requests
-import streamlit as st
+import re
 from datetime import datetime, timedelta
 
 NEWS_API_KEY = "a2d9fe97768445908783c1ebfc9c76d4"
@@ -9,22 +9,34 @@ NEWS_URL = "https://newsapi.org/v2/everything"
 def clean_topic(topic: str):
     topic = topic.lower().strip()
 
-    remove_words = [
-        "tell me",
-        "show me",
-        "give me",
-        "latest",
-        "news",
-        "about",
-        "the",
-        "they",
-        "what is",
-        "what are",
-        "please",
+    # Use word-boundary regex so 'the' doesn't corrupt 'they', 'them' etc.
+    remove_patterns = [
+        r"\btell me\b",
+        r"\bshow me\b",
+        r"\bgive me\b",
+        r"\bget me\b",
+        r"\blatest\b",
+        r"\brecent\b",
+        r"\bnews\b",
+        r"\babout\b",
+        r"\bthey\b",
+        r"\bthe\b",
+        r"\bwhat is\b",
+        r"\bwhat are\b",
+        r"\bplease\b",
+        r"\bof\b",
+        r"\bon\b",
+        r"\bfor\b",
+        r"\bme\b",
+        r"\bsome\b",
+        r"\bany\b",
+        r"\bgive\b",
+        r"\btell\b",
     ]
 
-    for word in remove_words:
-        topic = topic.replace(word, "")
+    for pattern in remove_patterns:
+        topic = re.sub(pattern, "", topic, flags=re.IGNORECASE)
+
 
     topic = " ".join(topic.split())
 

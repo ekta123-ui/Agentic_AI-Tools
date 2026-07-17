@@ -49,8 +49,8 @@ def detect_tool(user_input):
 
     # News
     if "news" in text:
-        topic = text.replace("news", "").replace("about", "").strip()
-        return "news", {"topic": topic}
+        # Pass full text — clean_topic() in news.py handles all stripping
+        return "news", {"topic": text}
 
     # Dictionary
     if "meaning of" in text:

@@ -24,9 +24,12 @@ def display_message(role, content):
             parts = content.split("::", 2)
             image_url = parts[1]
             caption = parts[2] if len(parts) > 2 else ""
-            st.image(image_url, caption=caption, use_container_width=True)
+            st.image(image_url, use_column_width=True)
+            if caption:
+                st.caption(caption)
         else:
             st.markdown(content)
+
 
 
 # Display previous messages
